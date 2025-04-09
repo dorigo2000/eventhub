@@ -1,0 +1,50 @@
+<div class="container mt-5" style="max-width: 500px;">
+    <div class="border p-4 rounded">
+        <h1 class="custom-title mb-3">EventHub</h1>
+        <p class="text-center fw-bold">Entra nella community e prenota i tuoi eventi preferiti in pochi clic!</p>
+        <div class="mt-4">
+            <%= form_with model: @user, url: sign_up_path, data: { turbo: "false" } do |form| %>
+                <% if form.object.errors.any? %>
+                    <div class="alert alert-danger">
+                        <% form.object.errors.full_messages.each do |message| %>
+                            <% unless message.include?("Password can't be blank") %>
+                            <% unless message.include?("Password confirmation doesn't match Password") %>
+                                <div><%= message %></div>
+                            <% end %>
+                            <% end %>
+                        <% end %>
+                    </div>
+                <% end %>
+                <div class="mb-3">
+                    <%= form.text_field :nome, class:"form-control", placeholder:"Nome" %>
+                </div>
+                <div class="mb-3">
+                    <%= form.text_field :cognome, class:"form-control", placeholder:"Cognome" %>
+                </div>
+                <div class="mb-3">
+                    <%= form.text_field :telefono, class:"form-control", placeholder:"Telefono" %>
+                </div>
+                <div class="mb-3">
+                    <%= form.date_field :data_nascita, class:"form-control" %>
+                </div>
+                <div class="mb-3">
+                    <%= form.select :tipo, options_for_select([['Organizzatore', 'organizzatore'], ['Partecipante', 'partecipante']], @user.tipo), { prompt: "Seleziona il tipo di utente" }, class: "form-control" %>
+                </div>
+                <div class="mb-3">
+                    <%= form.text_field :email, class:"form-control", placeholder:"Email" %>
+                </div>
+                <div class="mb-3">
+                    <%= form.password_field :password, class:"form-control", placeholder:"Password" %>
+                </div>
+                <div class="mb-3">
+                    <%= form.password_field :password_confirmation, class:"form-control", placeholder:"Conferma Password" %>
+                </div>
+                <div>
+                    <center>
+                        <%= form.submit "Iscriviti", class:"btn btn-primary" %>
+                    </center>
+                </div>
+            <% end %>
+        </div>
+    </div>
+</div>

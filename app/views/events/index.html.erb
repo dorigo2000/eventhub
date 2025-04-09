@@ -1,0 +1,49 @@
+<div class="container mt-5" style="max-width: 800px;">
+    <% if flash.now[:notice] %>
+        <div class="alert alert-info text-center">
+            <%= flash.now[:notice] %>
+        </div>
+    <% end %>
+    <% if flash.now[:alert] %>
+        <div class="alert alert-danger text-center">
+            <%= flash.now[:alert] %>
+        </div>
+    <% end %>
+    
+
+    <h1 class="custom-title ml-4 text-center" style="color: black;">Eventi disponibili</h1><hr>
+    <% if @events.any? %>
+        <% @events.each do |event| %>
+            <div class="event">
+                <h2 class="custom-title" style="text-align: justify;"><%= event.nome %></h2>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Luogo:</strong> <%= "#{event.indirizzo}, #{event.paese}" %></p>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Inizio:</strong> <%= "#{event.data_inizio.strftime("%d/%m/%Y")}, #{event.orario_inizio.strftime("%H:%M")}" %></p>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Fine:</strong> <%= "#{event.data_fine.strftime("%d/%m/%Y")}, #{event.orario_fine.strftime("%H:%M")}" %></p>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Partecipanti:</strong> <%= event.num_partecipanti %>/<%= event.max_partecipanti %></p>
+                <% if event.user_id == Current.user.id %>
+                    <p class="custom-title" style="color: green; text-align: justify;">Organizzato da te</p>
+                <% else %>
+                    <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Organizzatore:</strong> <%= "#{event.user.nome} #{event.user.cognome}" %></p>
+                <% end %>
+                <% if Current.user.tipo=="partecipante" %>
+                    <% if Date.today < event.data_inizio %>
+                        <% if !event.attendees.include?(Current.user) %>
+                            <% if event.num_partecipanti  <event.max_partecipanti %>
+                                <%= button_to "Iscriviti", subscribe_event_path(event), method: :post, class: "btn btn-primary", data: { turbo: "false" } %>
+                            <% else %>
+                                <p class="custom-title" style="color: red; text-align: justify;">Posti esauriti</p>
+                            <% end %>
+                        <% else %>
+                            <p class="custom-title" style="color: green; text-align: justify;">Sei già iscritto</p>
+                        <% end %>
+                    <% else %>
+                        <p class="custom-title" style="color: red; text-align: justify;">Iscrizioni chiuse</p>
+                    <% end %>
+                <% end %>
+            </div>
+            <hr>
+        <% end %>
+    <% else %>
+        <p class="custom-title" style="color: black;">Non ci sono eventi disponibili</p>
+    <% end %>
+</div>

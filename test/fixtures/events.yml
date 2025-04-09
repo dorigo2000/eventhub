@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  nome: MyString
+  data_inizio: 2025-03-05
+  orario_inizio: 2025-03-05 15:25:23
+  data_fine: 2025-03-05
+  orario_fine: 2025-03-05 15:25:23
+  paese: MyString
+  indirizzo: MyString
+  max_partecipanti: 1
+
+two:
+  user: two
+  nome: MyString
+  data_inizio: 2025-03-05
+  orario_inizio: 2025-03-05 15:25:23
+  data_fine: 2025-03-05
+  orario_fine: 2025-03-05 15:25:23
+  paese: MyString
+  indirizzo: MyString
+  max_partecipanti: 1

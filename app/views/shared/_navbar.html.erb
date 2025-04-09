@@ -1,0 +1,65 @@
+<% if Current.user %>
+<nav class="navbar navbar-expand-lg" style="background-color: #faebd7;">
+<div class="container-fluid">
+  <%= link_to "EventHub", events_path, class:"custom-title mb-2 navbar-brand" %>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mb-2 mb-lg-0">
+      <li class="nav-item">
+        <%= link_to "Home", events_path, class: "nav-link" %>
+      </li>
+      <% if Current.user.tipo == "partecipante" %>
+        <li class="nav-item">
+          <%= link_to "Le mie iscrizioni", subscriptions_path, class: "nav-link" %>
+        </li>
+      <% end %>
+      <% if Current.user.tipo == "organizzatore" %>
+        <li class="nav-item">
+          <%= link_to "I miei eventi", my_events_events_path, class: "nav-link" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Aggiungi evento", new_event_path, class: "nav-link" %>
+        </li>
+      <% end %>
+      <li class="nav-item dropdown list-unstyled ms-auto">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Notifiche (<%= Current.user.notifications.unread.count %>)
+      </a>
+      <ul class="dropdown-menu dropdown-menu-center mt-2" style="width: 300px; background-color: #faebd7;" aria-labelledby="navbarUserDropdown">
+        <% if Current.user.notifications.unread.any? %>
+          <% Current.user.notifications.each do |notification| %>
+            <% if notification.letto!=true %>
+              <li class="text-center mt-1 mb-1">
+                <strong><%= notification.messaggio %></strong>
+                <%= button_to "Segna come letto", mark_as_read_notification_path(notification), method: :patch, class: "btn btn-sm", style: "background-color: transparent;" %>
+              </li>
+            <% end %>
+          <% end %>
+        <% else %>
+          <li class="text-center"><strong>Non ci sono notifiche</strong></li>
+        <% end %>
+      </ul>
+    </li>
+    </ul>
+    <%= form_with url: events_path, method: :get, local: true, class: "d-flex ms-auto me-auto" do %>
+      <%= text_field_tag :search_city, params[:search_city], placeholder: "Città", class: "form-control me-2", style: "border-color: grey; background-color: #faebd7" %>
+      <%= submit_tag "Cerca", class: "btn btn-outline-success" %>
+    <% end %>
+    <% if Current.user %>
+      <li class="nav-item dropdown list-unstyled ms-auto">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <strong><%= "#{Current.user.nome} #{Current.user.cognome}" %></strong>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end mt-3" aria-labelledby="navbarUserDropdown" style="background-color: #faebd7;">
+          <li>
+            <%= button_to "Logout", logout_path, method: :delete, class: "dropdown-item", form: { class: "d-inline" } %>
+          </li>
+        </ul>
+      </li>
+    <% end %>
+  </div>
+</div>
+</nav>
+<% end %>

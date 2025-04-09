@@ -1,0 +1,49 @@
+<div class="container mt-3" style="max-width: 500px;">
+    <h1 class="custom-title ml-4 text-center" style="color: black;">Crea un nuovo evento</h1>
+    <div class="mt-4 mb-2 border p-3 rounded">
+        <%= form_with model: @event, data: { turbo: "false" } do |form| %>
+            <% if form.object.errors.any? %>
+                <div class="alert alert-danger">
+                    <% form.object.errors.full_messages.each do |message| %>
+                        <div><%= message %></div>
+                    <% end %>
+                </div>
+            <% end %>
+            <div class="mb-3">
+                <%= form.label :nome, "Nome evento" %>
+                <%= form.text_field :nome, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+                <%= form.label :data_inizio, "Data di inizio" %>
+                <%= form.date_field :data_inizio, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+                <%= form.label :ora_inizio, "Ora di inizio" %>
+                <%= form.time_field :orario_inizio, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+                <%= form.label :data_fine, "Data di fine" %>
+                <%= form.date_field :data_fine, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+                <%= form.label :ora_fine, "Ora di fine" %>
+                <%= form.time_field :orario_fine, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+                <%= form.label :paese, "Città" %>
+                <%= form.text_field :paese, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+                <%= form.label :indirizzo, "Indirizzo" %>
+                <%= form.text_field :indirizzo, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+                <%= form.label :max_partecipanti, "Numero massimo di partecipanti" %>
+                <%= form.number_field :max_partecipanti, class: "form-control" %>
+            </div>
+            <center>
+                <%= form.submit "Crea evento", class: "btn btn-success mt-2" %>
+            </center>
+        <% end %>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+<div class="container mt-5" style="max-width: 800px;">
+  <% if flash.now[:notice] %>
+    <div class="alert alert-info text-center">
+      <%= flash.now[:notice] %>
+    </div>
+  <% end %>
+  <h1 class="custom-title ml-4 text-center" style="color: black;">Partecipanti a "<%= @event.nome %>"</h1><hr>
+
+  <% if @participants.any? %>
+    <% if Date.today < @event.data_inizio %>
+      <table width="100%">
+        <% @participants.each do |participants| %>
+          <tr>
+            <td width="25%">
+              <p class="custom-title" style="color: black; font-weight: normal;"><%= "#{participants.nome} #{participants.cognome}" %></p>
+            </td>
+            <td width="25%">
+              <p class="custom-title" style="color: black; font-weight: normal;"><%= participants.data_nascita.strftime("%d/%m/%Y") %></p>
+            </td>
+            <td width="25%">
+              <p class="custom-title" style="color: black; font-weight: normal;"><%= participants.email %></p>
+            </td>
+            <td width="25%" style="text-align: center;">
+              <%= button_to "Rimuovi", remove_participant_event_path(@event, participant_id: participants.id), method: :delete, data: { turbo_method: :delete, turbo_confirm: "Sei sicuro di voler rimuovere #{participants.nome} #{participants.cognome} dall'evento?" }, class: "btn btn-danger mb-2" %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    <% else %>
+      <table width="100%">
+        <% @participants.each do |participants| %>
+          <tr>
+            <td width="33%">
+              <p class="custom-title" style="color: black; font-weight: normal;"><%= "#{participants.nome} #{participants.cognome}" %></p>
+            </td>
+            <td width="33%">
+              <p class="custom-title" style="color: black; font-weight: normal;"><%= participants.data_nascita.strftime("%d/%m/%Y") %></p>
+            </td>
+            <td width="34%">
+              <p class="custom-title" style="color: black; font-weight: normal;"><%= participants.email %></p>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    <% end %>
+  <% else %>
+    <p class="custom-title" style="color: black;">Non ci sono partecipanti a questo evento</p>
+  <% end %>
+</div>

@@ -1,0 +1,32 @@
+<div class="container mt-5" style="max-width: 800px;">
+    <% if flash.now[:notice] %>
+        <div class="alert alert-info text-center">
+            <%= flash.now[:notice] %>
+        </div>
+    <% end %>
+    <h1 class="custom-title ml-4 text-center" style="color: black;">I tuoi eventi pubblicati</h1><hr>
+    <% if @events.any? %>
+        <% @events.each do |event| %>
+            <div class="event">
+                <h2 class="custom-title" style="text-align: justify;"><%= event.nome %></h2>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Luogo</strong>: <%= "#{event.indirizzo}, #{event.paese}" %></p>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Inizio</strong>: <%= "#{event.data_inizio.strftime("%d/%m/%Y")}, #{event.orario_inizio.strftime("%H:%M")}" %></p>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Fine</strong>: <%= "#{event.data_fine.strftime("%d/%m/%Y")}, #{event.orario_fine.strftime("%H:%M")}" %></p>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Partecipanti:</strong> <%= event.num_partecipanti %>/<%= event.max_partecipanti %>
+                    <% if event.num_partecipanti > 0 %>
+                        <%= link_to "Vedi partecipanti", participants_event_path(event) %>
+                    <% end %>
+                </p>
+                <% if Date.today < event.data_inizio %>
+                    <div class="d-inline-flex gap-2">
+                        <%= link_to "Modifica", edit_event_path(event), class:"btn btn-outline-success" %>
+                        <%= button_to "Elimina", event_path(event), method: :delete, data: { turbo_method: :delete, turbo_confirm: "Sei sicuro di voler eliminare l'evento '#{event.nome}'?" }, class: "btn btn-outline-danger" %>
+                    </div>
+                <% end %>
+            </div>
+            <hr>
+        <% end %>
+    <% else %>
+        <p class="custom-title" style="color: black;">Non hai ancora pubblicato eventi</p>
+    <% end %>
+</div>

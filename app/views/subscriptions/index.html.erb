@@ -1,0 +1,28 @@
+<div class="container mt-5" style="max-width: 800px;">
+    <% if flash.now[:notice] %>
+        <div class="alert alert-info text-center">
+            <%= flash.now[:notice] %>
+        </div>
+    <% end %>
+    <h1 class="custom-title ml-4 text-center" style="color: black;">Le tue iscrizioni</h1><hr>
+    <% if @subscriptions.any? %>
+        <% @subscriptions.each do |subscription| %>
+            <div class="event">
+                <h2 class="custom-title" style="text-align: justify;"><%= subscription.nome %></h2>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Luogo</strong>: <%= "#{subscription.indirizzo}, #{subscription.paese}" %></p>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Inizio</strong>: <%= "#{subscription.data_inizio.strftime("%d/%m/%Y")}, #{subscription.orario_inizio.strftime("%H:%M")}" %></p>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Fine</strong>: <%= "#{subscription.data_fine.strftime("%d/%m/%Y")}, #{subscription.orario_fine.strftime("%H:%M")}" %></p>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Partecipanti:</strong> <%= subscription.num_partecipanti %>/<%= subscription.max_partecipanti %></p>
+                <p class="custom-title" style="color: black; text-align: justify; font-weight: normal;"><strong>Organizzatore:</strong> <%= "#{subscription.user.nome} #{subscription.user.cognome}" %></p>
+                <% if Date.today < subscription.data_inizio %>
+                    <div class="d-inline-flex gap-2">
+                        <%= button_to "Elimina", subscription_path(subscription), method: :delete, data: { turbo_method: :delete, turbo_confirm: "Sei sicuro di voler annullare l'iscrizione all'evento '#{subscription.nome}'?" }, class: "btn btn-outline-danger" %>
+                    </div>
+                <% end %>
+            </div>
+            <hr>
+        <% end %>
+    <% else %>
+        <p class="custom-title" style="color: black;">Non hai ancora effettuato iscrizioni</p>
+    <% end %>
+</div>
