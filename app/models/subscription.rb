@@ -10,10 +10,12 @@ class Subscription < ApplicationRecord
   private
 
   def no_conflicting_events
-    overlapping_events = user.subscribed_events.where("data_inizio = ?", event.data_inizio)
+    overlapping_events = user.subscribed_events.where(
+      "data_inizio <= ? AND data_fine >= ?", event.data_fine, event.data_inizio
+    )
     
     if overlapping_events.exists?
-      errors.add(:base, "Impossibile effettuare l'iscrizione, sei già iscritto a un evento nella stessa data!")
+      errors.add(:base, "Impossibile effettuare l'iscrizione, l'evento si sovrappone ad un altro evento a cui sei iscritto")
     end
   end
 

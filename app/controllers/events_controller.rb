@@ -35,43 +35,50 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
   
     if @event.update(event_params)
-      removed_users = []
-  
-      if @event.saved_change_to_data_inizio?
+      users_notifications = Set.new
+
+      if @event.saved_change_to_data_inizio? || @event.saved_change_to_data_fine?
         @event.attendees.each do |user|
-          overlapping_event = user.subscribed_events.where(data_inizio: @event.data_inizio).where.not(id: @event.id).order(created_at: :desc).first
-  
-          if overlapping_event
-            subscription = Subscription.find_by(event: overlapping_event, user: user)
-            if subscription
-              subscription.destroy
-              removed_users << user.id
-  
-              Notification.create!(
-                user: user,
-                event: @event,
-                messaggio: "L'scrizione all'evento '#{overlapping_event.nome}' è stata rimossa perché è stato spostato a una data in cui hai già un altro evento."
-              )
-            end
+          current_event_subscription = user.subscriptions.find_by(event: @event)
+
+          overlapping_subscription_to_remove = user.subscriptions
+                                                   .joins(:event)
+                                                   .where.not(subscriptions: { id: current_event_subscription&.id })
+                                                   .where(
+                                                     "events.data_fine >= ? AND ? >= events.data_inizio",
+                                                     @event.data_inizio,
+                                                     @event.data_fine
+                                                   )
+                                                   .order(created_at: :desc)
+                                                   .first
+
+          if current_event_subscription && (current_event_subscription.created_at > overlapping_subscription_to_remove.created_at)
+            subscription_to_destroy = current_event_subscription
+            event_notification = @event
+            message = "L'iscrizione all'evento '#{@event.nome}' è stata rimossa perché si sovrappone con l'evento '#{overlapping_subscription_to_remove.event.nome}' ed era la più recente."
+          else
+            subscription_to_destroy = overlapping_subscription_to_remove
+            event_notification = overlapping_subscription_to_remove.event
+            message = "L'iscrizione all'evento '#{overlapping_subscription_to_remove.event.nome}' è stata rimossa perché l'evento '#{@event.nome}' è stato spostato e si sovrappone."
+          end
+
+          if subscription_to_destroy && subscription_to_destroy.destroy
+            users_notifications.add(user.id)
+            Notification.create!(
+              user: user,
+              event: event_notification,
+              messaggio: message
+            )
           end
         end
       end
-  
-      @event.subscriptions.each do |subscription|
-        unless removed_users.include?(subscription.user.id)
-          Notification.create!(
-            user: subscription.user,
-            event: @event,
-            messaggio: "L'evento '#{@event.nome}' è stato modificato."
-          )
-        end
-      end
-  
+
       redirect_to my_events_events_path, notice: "Evento modificato con successo!"
     else
       render :edit
     end
   end
+
   
 
   def destroy

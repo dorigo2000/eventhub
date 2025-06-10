@@ -51,8 +51,10 @@ class Event < ApplicationRecord
   end
 
   def orario_check
-    if data_inizio == data_fine && orario_inizio > orario_fine
-      errors.add(:base, "Ora di fine non può essere prima dell'ora di inizio")
+    if data_inizio.present? && data_fine.present?
+      if data_inizio == data_fine && orario_inizio > orario_fine
+        errors.add(:base, "Ora di fine non può essere prima dell'ora di inizio")
+      end
     end
   end
 

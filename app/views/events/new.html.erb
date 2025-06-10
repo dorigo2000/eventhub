@@ -42,6 +42,7 @@
                 <%= form.number_field :max_partecipanti, class: "form-control" %>
             </div>
             <center>
+                <%= link_to "Annulla", events_path, class: "btn btn-secondary mt-2" %>
                 <%= form.submit "Crea evento", class: "btn btn-success mt-2" %>
             </center>
         <% end %>
